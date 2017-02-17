@@ -1,8 +1,11 @@
 {
   "name": "nested-validate",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Validation of nested object types and arrays",
-  "repository": "https://github.com/jtremback/nested-validate",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jtremback/nested-validate.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "node test.js"
