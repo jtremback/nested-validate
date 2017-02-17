@@ -1,0 +1,19 @@
+{
+  "name": "foo-validate",
+  "version": "1.0.0",
+  "description": "Validation of nested object types and arrays",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "devDependencies": {
+    "blue-tape": "^1.0.0",
+    "eslint": "^3.14.1",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1",
+    "tape": "^4.6.3"
+  },
+  "author": "",
+  "license": "MIT"
+}
