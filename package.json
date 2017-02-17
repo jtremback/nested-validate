@@ -1,5 +1,5 @@
 {
-  "name": "foo-validate",
+  "name": "nested-validate",
   "version": "1.0.0",
   "description": "Validation of nested object types and arrays",
   "main": "index.js",
