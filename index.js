@@ -1,56 +1,83 @@
-const isObjectOf = schema => obj => {
-    if (obj === undefined) {
-        throw new Error('missing')
-    }
-    Object.keys(schema).forEach(key => {
-        const value = obj[key]
-        const predicate = schema[key]
-        try {
-            if (predicate(value) === false) {
-                throw new Error('invalid')
-            }
-        } catch(err) {
-            throw new Error(`${key} ${err.message}`)
-        }
-    })
-    
-    return true
+let standardErrors = {
+  handleInvalid: () => new Error('invalid'),
+  handleMissing: () => new Error('missing')
 }
 
-const isArrayOf = predicate => arr => {
-    if (arr === undefined) {
-        throw new Error('missing')
+const isObjectOf = errors => schema => obj => {
+  if (obj === undefined) {
+    throw errors.handleMissing()
+  }
+  Object.keys(schema).forEach(key => {
+    const value = obj[key]
+    const predicate = schema[key]
+    try {
+      if (predicate(value) === false) {
+        throw errors.handleInvalid()
+      }
+    } catch (err) {
+      err.message = `${key} ${err.message}`
+      throw err
     }
-    arr.forEach((value, i) => {
-        try {
-            if (predicate(value) === false) {
-                throw new Error('invalid')
-            }
-        } catch(err) {
-            throw new Error(`[${i}] ${err.message}`)
-        }
-    })
+  })
+
+  return true
 }
 
-const isRequired = predicate => value => {
-    if (value === undefined) {
-        throw new Error('missing')
-    } else {
-        return predicate(value)
+const isArrayOf = errors => predicate => arr => {
+  if (arr === undefined) {
+    throw errors.handleMissing()
+  }
+  arr.forEach((value, i) => {
+    try {
+      if (predicate(value) === false) {
+        throw errors.handleInvalid()
+      }
+    } catch (err) {
+      err.message = `[${i}] ${err.message}`
+      throw err
     }
+  })
+}
+
+const isRequired = errors => predicate => value => {
+  if (value === undefined) {
+    throw errors.handleMissing()
+  } else {
+    return predicate(value)
+  }
 }
 
 const isOptional = predicate => value => {
-    if (value === undefined) {
-        return true
-    } else {
-        return predicate(value)
-    }
+  if (value === undefined) {
+    return true
+  } else {
+    return predicate(value)
+  }
 }
 
+const isFunction = isRequired(standardErrors)(a => {
+  if (typeof a !== 'function') {
+    throw new Error('must be function')
+  }
+  return true
+})
+const isCustomErrors = isObjectOf(standardErrors)({
+  handleInvalid: isFunction,
+  handleMissing: isFunction
+})
+
 module.exports = {
-  isObjectOf,
-  isArrayOf,
-  isRequired,
-  isOptional
+  isObjectOf: isObjectOf(standardErrors),
+  isArrayOf: isArrayOf(standardErrors),
+  isRequired: isRequired(standardErrors),
+  isOptional,
+  customErrors: (errors) => {
+    isCustomErrors(errors)
+    return {
+      isObjectOf: isObjectOf(errors),
+      isArrayOf: isArrayOf(errors),
+      isRequired: isRequired(errors),
+      isOptional
+    }
+  }
 }

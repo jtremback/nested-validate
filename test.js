@@ -1,19 +1,12 @@
-const test = require('blue-tape')
+const test = require('tape')
 const {
   isObjectOf,
   isArrayOf,
   isOptional,
-  isRequired
+  isRequired,
+  customErrors
 } = require('./index.js')
-// const awesomeErrorHandler = predicate => value => {
-//     try {
-//         predicate(value)
-//     } catch(err) {
-//         const err = new Error(`Holy crap: ${err.message}`)
-//         err.code = 7002
-//         throw err
-//     }
-// }
+
 const isString = isRequired(n => typeof n === 'string')
 const isNumber = isRequired(n => typeof n === 'number')
 
@@ -34,76 +27,69 @@ const isMyOtherType = isObjectOf({
   myType: isMyType
 })
 
-
 test('happy path', t => {
-  isMyOtherType({
-    baz: 'dop',
-    myType:{
-      foo: '3',
-      bar: 3,
-      arr: [3, 3]
-    }
+  t.plan(1)
+  t.doesNotThrow(() => {
+    isMyOtherType({
+      baz: 'dop',
+      myType: {
+        foo: '3',
+        bar: 3,
+        arr: [3, 3]
+      }
+    })
   })
-
-  t.end()
 })
 
 test('missing array', t => {
-  try {
+  t.plan(1)
+  t.throws(() => {
     isMyOtherType({
       baz: 'dop',
-      myType:{
+      myType: {
         foo: '3',
-        bar: 3,
+        bar: 3
         // arr: [3, 3]
       }
     })
-  } catch (err) {
-    t.equal(err.message, 'myType arr missing')
-  }
-
-  t.end()
+  }, /myType arr missing/)
 })
 
 test('wrong type', t => {
-  try {
+  t.plan(1)
+
+  t.throws(() => {
     isMyOtherType({
       baz: 'dop',
-      myType:{
+      myType: {
         foo: 3,
         bar: 3,
         arr: [3, 3]
       }
     })
-  } catch (err) {
-    t.equal(err.message, 'myType foo invalid')
-  }
-
-  t.end()
+  }, /myType foo invalid/)
 })
 
 test('missing optional', t => {
-  try {
+  t.plan(1)
+  t.doesNotThrow(() => {
     isMyOtherType({
       baz: 'dop',
-      myType:{
+      myType: {
         // foo: 3,
         bar: 3,
         arr: [3, 3]
       }
     })
-  } catch (err) {
-    t.notOk(err.message)
-  }
-
-  t.end()
+  })
 })
 
 test('array of objects', t => {
-  try {
+  t.plan(1)
+  t.doesNotThrow(() => {
     isMyOtherType({
       baz: 'dop',
-      myType:{
+      myType: {
         // foo: 3,
         bar: 3,
         arr: [3, 3],
@@ -115,18 +101,15 @@ test('array of objects', t => {
         ]
       }
     })
-  } catch (err) {
-    t.notOk(err.message)
-  }
-
-  t.end()
+  })
 })
 
 test('array of objects with wrong property', t => {
-  try {
+  t.plan(1)
+  t.throws(() => {
     isMyOtherType({
       baz: 'dop',
-      myType:{
+      myType: {
         foo: 'derp',
         bar: 3,
         arr: [3, 3],
@@ -138,9 +121,48 @@ test('array of objects with wrong property', t => {
         ]
       }
     })
-  } catch (err) {
-    t.equal(err.message, 'myType addresses [0] houseNumber invalid')
-  }
+  }, /myType addresses \[0\] houseNumber invalid/)
+})
 
-  t.end()
+test('custom errors', t => {
+  t.plan(2)
+  const {
+    isObjectOf,
+    isArrayOf,
+    isRequired
+  } = customErrors({
+    handleInvalid: () => {
+      return new Error('dang')
+    },
+    handleMissing: () => {
+      return new Error('crap')
+    }
+  })
+
+  const isString = isRequired(n => typeof n === 'string')
+
+  const isAwesomeCar = isObjectOf({
+    whales: isArrayOf(isString)
+  })
+
+  t.throws(() => {
+    isAwesomeCar({
+      whales: [ 'beluga', 3 ]
+    })
+  }, /whales \[1\] dang/)
+
+  t.throws(() => {
+    isAwesomeCar({
+      frond: 'gop'
+    })
+  }, /whales crap/)
+})
+
+test('throw on bad custom errors', t => {
+  t.plan(1)
+  t.throws(() => {
+    customErrors({
+      shibby: 'crunk'
+    })
+  }, /handleInvalid missing/)
 })

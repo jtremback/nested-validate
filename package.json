@@ -7,7 +7,6 @@
     "test": "node test.js"
   },
   "devDependencies": {
-    "blue-tape": "^1.0.0",
     "eslint": "^3.14.1",
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-promise": "^3.4.0",

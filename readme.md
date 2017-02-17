@@ -48,3 +48,34 @@ isMyOtherType({
 // Will throw: 'myType addresses [0] houseNumber invalid'
 
 ```
+
+## Custom error handlers
+
+You can give this package an object with custom error handlers for missing and invalid errors.
+
+```js
+const {
+  isObjectOf,
+  isArrayOf,
+  isRequired
+} = customErrors({
+  handleInvalid: () => {
+    return new Error('dang')
+  },
+  handleMissing: () => {
+    return new Error('crap')
+  }
+})
+
+const isString = isRequired(n => typeof n === 'string')
+
+const isAwesomeCar = isObjectOf({
+  whales: isArrayOf(isString)
+})
+
+isAwesomeCar({
+  whales: [ 'beluga', 3 ] // <- 3 is not a string
+})
+
+// Will throw: 'whales [1] dang'
+```
