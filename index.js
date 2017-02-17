@@ -15,8 +15,12 @@ const isObjectOf = errors => schema => obj => {
         throw errors.handleInvalid()
       }
     } catch (err) {
-      err.message = `${key} ${err.message}`
-      throw err
+      const _err = new Error()
+
+      _err.message = `${key} -> ${err.message}`
+      _err.code = err.code
+
+      throw _err
     }
   })
 
@@ -33,8 +37,12 @@ const isArrayOf = errors => predicate => arr => {
         throw errors.handleInvalid()
       }
     } catch (err) {
-      err.message = `[${i}] ${err.message}`
-      throw err
+      const _err = new Error()
+
+      _err.message = `[${i}] -> ${err.message}`
+      _err.code = err.code
+
+      throw _err
     }
   })
 }
