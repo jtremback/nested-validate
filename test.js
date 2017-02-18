@@ -52,7 +52,7 @@ test('missing array', t => {
         // arr: [3, 3]
       }
     })
-  }, /myType arr missing/)
+  }, /myType -> arr -> missing/)
 })
 
 test('wrong type', t => {
@@ -67,7 +67,7 @@ test('wrong type', t => {
         arr: [3, 3]
       }
     })
-  }, /myType foo invalid/)
+  }, /myType -> foo -> invalid/)
 })
 
 test('missing optional', t => {
@@ -121,7 +121,7 @@ test('array of objects with wrong property', t => {
         ]
       }
     })
-  }, /myType addresses \[0\] houseNumber invalid/)
+  }, /myType -> addresses -> \[0\] -> houseNumber -> invalid/)
 })
 
 test('custom errors', t => {
@@ -149,13 +149,13 @@ test('custom errors', t => {
     isAwesomeCar({
       whales: [ 'beluga', 3 ]
     })
-  }, /whales \[1\] dang/)
+  }, /whales -> \[1\] -> dang/)
 
   t.throws(() => {
     isAwesomeCar({
       frond: 'gop'
     })
-  }, /whales crap/)
+  }, /whales -> crap/)
 })
 
 test('throw on bad custom errors', t => {
@@ -164,5 +164,5 @@ test('throw on bad custom errors', t => {
     customErrors({
       shibby: 'crunk'
     })
-  }, /handleInvalid missing/)
+  }, /handleInvalid -> missing/)
 })
