@@ -67,7 +67,6 @@ const isRequired = errors => predicate => {
     throw new Error('predicate is not a function')
   }
   return value => {
-
     if (value === undefined) {
       throw errors.handleMissing()
     } else {

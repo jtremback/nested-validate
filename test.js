@@ -166,3 +166,20 @@ test('throw on bad custom errors', t => {
     })
   }, /handleInvalid -> missing/)
 })
+
+test('throw on non-function predicate', t => {
+  t.plan(4)
+
+  t.throws(() => {
+    isRequired(false)
+  }, /predicate is not a function/)
+  t.throws(() => {
+    isOptional('foo')
+  }, /predicate is not a function/)
+  t.throws(() => {
+    isArrayOf('foo')
+  }, /predicate is not a function/)
+  t.throws(() => {
+    isObjectOf({ bar: 'foo' })
+  }, /predicate for bar is not a function/)
+})
