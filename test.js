@@ -183,3 +183,14 @@ test('throw on non-function predicate', t => {
     isObjectOf({ bar: 'foo' })
   }, /predicate for bar is not a function/)
 })
+
+test('throw on non-array or non-object', t => {
+  t.plan(2)
+
+  t.throws(() => {
+    isObjectOf({ foo: isString })([])
+  }, /invalid/)
+  t.throws(() => {
+    isArrayOf(isString)({})
+  }, /invalid/)
+})

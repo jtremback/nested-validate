@@ -14,6 +14,9 @@ const isObjectOf = errors => schema => {
     if (obj === undefined) {
       throw errors.handleMissing()
     }
+    if (Object.prototype.toString.call(obj) !== '[object Object]') {
+      throw errors.handleInvalid()
+    }
     Object.keys(schema).forEach(key => {
       const value = obj[key]
       const predicate = schema[key]
@@ -43,6 +46,9 @@ const isArrayOf = errors => predicate => {
   return arr => {
     if (arr === undefined) {
       throw errors.handleMissing()
+    }
+    if (!Array.isArray(arr)) {
+      throw errors.handleInvalid()
     }
     arr.forEach((value, i) => {
       try {
