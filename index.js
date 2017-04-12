@@ -29,7 +29,6 @@ const isObjectOf = errors => schema => {
 
         _err.message = `${key} -> ${err.message}`
         _err.code = err.code
-        _err.stack = err.stack
 
         throw _err
       }
@@ -60,7 +59,6 @@ const isArrayOf = errors => predicate => {
 
         _err.message = `[${i}] -> ${err.message}`
         _err.code = err.code
-        _err.stack = err.stack
 
         throw _err
       }
@@ -94,6 +92,24 @@ const isOptional = predicate => {
   }
 }
 
+const label = (label, predicate) => {
+  if (typeof predicate !== 'function') {
+    throw new Error('predicate is not a function')
+  }
+  return value => {
+    try {
+      return predicate(value)
+    } catch (err) {
+      const _err = new Error()
+
+      _err.message = `${label} -> ${err.message}`
+      _err.code = err.code
+
+      throw _err
+    }
+  }
+}
+
 const isFunction = isRequired(standardErrors)(a => {
   if (typeof a !== 'function') {
     throw new Error('must be function')
@@ -111,13 +127,15 @@ module.exports = {
   isArrayOf: isArrayOf(standardErrors),
   isRequired: isRequired(standardErrors),
   isOptional,
+  label,
   customErrors: (errors) => {
     isCustomErrors(errors)
     return {
       isObjectOf: isObjectOf(errors),
       isArrayOf: isArrayOf(errors),
       isRequired: isRequired(errors),
-      isOptional
+      isOptional,
+      label,
     }
   }
 }

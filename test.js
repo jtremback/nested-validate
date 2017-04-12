@@ -4,6 +4,7 @@ const {
   isArrayOf,
   isOptional,
   isRequired,
+  label,
   customErrors
 } = require('./index.js')
 
@@ -193,4 +194,18 @@ test('throw on non-array or non-object', t => {
   t.throws(() => {
     isArrayOf(isString)({})
   }, /invalid/)
+})
+
+test('label', t => {
+  t.plan(1)
+  t.throws(() => {
+    label('myOtherType', isMyOtherType)({
+      baz: 'dop',
+      myType: {
+        foo: '3',
+        bar: 3
+        // arr: [3, 3]
+      }
+    })
+  }, /myOtherType -> myType -> arr -> missing/)
 })
