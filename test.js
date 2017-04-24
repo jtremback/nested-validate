@@ -28,6 +28,11 @@ const isMyOtherType = isObjectOf({
   myType: isMyType
 })
 
+const isMyErrorType = isObjectOf({
+  message: isString,
+  code: isNumber
+})
+
 test('happy path', t => {
   t.plan(1)
   t.doesNotThrow(() => {
@@ -208,4 +213,22 @@ test('label', t => {
       }
     })
   }, /myOtherType -> myType -> arr -> missing/)
+})
+
+
+test('happy path validating error', t => {
+  t.plan(1)
+  t.doesNotThrow(() => {
+    const error = new Error('Test error')
+    error.code = 9001;
+    isMyErrorType(error)
+  })
+})
+
+test('sad path validating error', t => {
+  t.plan(1)
+  t.throws(() => {
+    const error = new Error('Test error')
+    isMyErrorType(error)
+  })
 })

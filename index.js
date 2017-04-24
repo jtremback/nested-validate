@@ -14,7 +14,8 @@ const isObjectOf = errors => schema => {
     if (obj === undefined) {
       throw errors.handleMissing()
     }
-    if (Object.prototype.toString.call(obj) !== '[object Object]') {
+    if ((Object.prototype.toString.call(obj) !== '[object Object]') &&
+        (Object.prototype.toString.call(obj) !== '[object Error]')) {
       throw errors.handleInvalid()
     }
     Object.keys(schema).forEach(key => {
