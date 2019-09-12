@@ -28,8 +28,8 @@ const isObjectOf = errors => schema => {
       } catch (err) {
         const _err = new Error()
 
+        Object.getOwnPropertyNames(err).map(k => _err[k] = err[k])
         _err.message = `${key} -> ${err.message}`
-        _err.code = err.code
 
         throw _err
       }
@@ -58,8 +58,8 @@ const isArrayOf = errors => predicate => {
       } catch (err) {
         const _err = new Error()
 
+        Object.getOwnPropertyNames(err).map(k => _err[k] = err[k])
         _err.message = `[${i}] -> ${err.message}`
-        _err.code = err.code
 
         throw _err
       }
@@ -103,8 +103,8 @@ const label = (label, predicate) => {
     } catch (err) {
       const _err = new Error()
 
+      Object.getOwnPropertyNames(err).map(k => _err[k] = err[k])
       _err.message = `${label} -> ${err.message}`
-      _err.code = err.code
 
       throw _err
     }
