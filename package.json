@@ -11,7 +11,7 @@
     "test": "node test.js"
   },
   "devDependencies": {
-    "eslint": "^3.14.1",
+    "eslint": "^6.6.0",
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^2.0.1",
